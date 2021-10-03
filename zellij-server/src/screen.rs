@@ -45,6 +45,10 @@ pub(crate) enum ScreenInstruction {
     MoveFocusUp,
     MoveFocusRight,
     MoveFocusRightOrNextTab,
+    MovePaneUp,
+    MovePaneDown,
+    MovePaneRight,
+    MovePaneLeft,
     Exit,
     ScrollUp,
     ScrollUpAt(Position),
@@ -99,6 +103,10 @@ impl From<&ScreenInstruction> for ScreenContext {
             ScreenInstruction::MoveFocusUp => ScreenContext::MoveFocusUp,
             ScreenInstruction::MoveFocusRight => ScreenContext::MoveFocusRight,
             ScreenInstruction::MoveFocusRightOrNextTab => ScreenContext::MoveFocusRightOrNextTab,
+            ScreenInstruction::MovePaneDown => ScreenContext::MovePaneDown,
+            ScreenInstruction::MovePaneUp => ScreenContext::MovePaneUp,
+            ScreenInstruction::MovePaneRight => ScreenContext::MovePaneRight,
+            ScreenInstruction::MovePaneLeft => ScreenContext::MovePaneLeft,
             ScreenInstruction::Exit => ScreenContext::Exit,
             ScreenInstruction::ScrollUp => ScreenContext::ScrollUp,
             ScreenInstruction::ScrollDown => ScreenContext::ScrollDown,
@@ -579,6 +587,21 @@ pub(crate) fn screen_thread_main(
             }
             ScreenInstruction::MoveFocusUp => {
                 screen.get_active_tab_mut().unwrap().move_focus_up();
+            }
+            ScreenInstruction::MovePaneDown => {
+                screen.get_active_tab_mut().unwrap().move_active_pane_down();
+            }
+            ScreenInstruction::MovePaneUp => {
+                screen.get_active_tab_mut().unwrap().move_active_pane_up();
+            }
+            ScreenInstruction::MovePaneRight => {
+                screen
+                    .get_active_tab_mut()
+                    .unwrap()
+                    .move_active_pane_right();
+            }
+            ScreenInstruction::MovePaneLeft => {
+                screen.get_active_tab_mut().unwrap().move_active_pane_left();
             }
             ScreenInstruction::ScrollUp => {
                 screen
