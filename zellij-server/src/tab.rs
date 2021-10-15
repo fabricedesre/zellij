@@ -2053,6 +2053,13 @@ impl Tab {
                 let new_position = self.panes.get_mut(&p).unwrap();
                 let next_geom = new_position.position_and_size();
                 let next_geom_override = new_position.geom_override();
+                if let PaneId::Terminal(pid) = self.active_terminal.as_ref().unwrap() {
+                    self.os_api.set_terminal_size_using_fd(
+                        *pid,
+                        new_position.get_content_columns() as u16,
+                        new_position.get_content_rows() as u16,
+                    );
+                }
                 new_position.set_geom(prev_geom);
                 if let Some(geom) = prev_geom_override {
                     new_position.get_geom_override(geom);
@@ -2060,6 +2067,13 @@ impl Tab {
                 new_position.set_should_render(true);
 
                 let current_position = self.panes.get_mut(&self.active_terminal.unwrap()).unwrap();
+                if let PaneId::Terminal(ref pid) = p {
+                    self.os_api.set_terminal_size_using_fd(
+                        *pid,
+                        current_position.get_content_columns() as u16,
+                        current_position.get_content_rows() as u16,
+                    );
+                }
                 current_position.set_geom(next_geom);
                 if let Some(geom) = next_geom_override {
                     current_position.get_geom_override(geom);
@@ -2093,6 +2107,13 @@ impl Tab {
                 let new_position = self.panes.get_mut(&p).unwrap();
                 let next_geom = new_position.position_and_size();
                 let next_geom_override = new_position.geom_override();
+                if let PaneId::Terminal(pid) = self.active_terminal.as_ref().unwrap() {
+                    self.os_api.set_terminal_size_using_fd(
+                        *pid,
+                        new_position.get_content_columns() as u16,
+                        new_position.get_content_rows() as u16,
+                    );
+                }
                 new_position.set_geom(prev_geom);
                 if let Some(geom) = prev_geom_override {
                     new_position.get_geom_override(geom);
@@ -2100,6 +2121,13 @@ impl Tab {
                 new_position.set_should_render(true);
 
                 let current_position = self.panes.get_mut(&self.active_terminal.unwrap()).unwrap();
+                if let PaneId::Terminal(ref pid) = p {
+                    self.os_api.set_terminal_size_using_fd(
+                        *pid,
+                        current_position.get_content_columns() as u16,
+                        current_position.get_content_rows() as u16,
+                    );
+                }
                 current_position.set_geom(next_geom);
                 if let Some(geom) = next_geom_override {
                     current_position.get_geom_override(geom);
@@ -2133,6 +2161,13 @@ impl Tab {
                 let new_position = self.panes.get_mut(&p).unwrap();
                 let next_geom = new_position.position_and_size();
                 let next_geom_override = new_position.geom_override();
+                if let PaneId::Terminal(pid) = self.active_terminal.as_ref().unwrap() {
+                    self.os_api.set_terminal_size_using_fd(
+                        *pid,
+                        new_position.get_content_columns() as u16,
+                        new_position.get_content_rows() as u16,
+                    );
+                }
                 new_position.set_geom(prev_geom);
                 if let Some(geom) = prev_geom_override {
                     new_position.get_geom_override(geom);
@@ -2140,6 +2175,13 @@ impl Tab {
                 new_position.set_should_render(true);
 
                 let current_position = self.panes.get_mut(&self.active_terminal.unwrap()).unwrap();
+                if let PaneId::Terminal(ref pid) = p {
+                    self.os_api.set_terminal_size_using_fd(
+                        *pid,
+                        current_position.get_content_columns() as u16,
+                        current_position.get_content_rows() as u16,
+                    );
+                }
                 current_position.set_geom(next_geom);
                 if let Some(geom) = next_geom_override {
                     current_position.get_geom_override(geom);
@@ -2173,6 +2215,13 @@ impl Tab {
                 let new_position = self.panes.get_mut(&p).unwrap();
                 let next_geom = new_position.position_and_size();
                 let next_geom_override = new_position.geom_override();
+                if let PaneId::Terminal(pid) = self.active_terminal.as_ref().unwrap() {
+                    self.os_api.set_terminal_size_using_fd(
+                        *pid,
+                        new_position.get_content_columns() as u16,
+                        new_position.get_content_rows() as u16,
+                    );
+                }
                 new_position.set_geom(prev_geom);
                 if let Some(geom) = prev_geom_override {
                     new_position.get_geom_override(geom);
@@ -2180,6 +2229,13 @@ impl Tab {
                 new_position.set_should_render(true);
 
                 let current_position = self.panes.get_mut(&self.active_terminal.unwrap()).unwrap();
+                if let PaneId::Terminal(ref pid) = p {
+                    self.os_api.set_terminal_size_using_fd(
+                        *pid,
+                        current_position.get_content_columns() as u16,
+                        current_position.get_content_rows() as u16,
+                    );
+                }
                 current_position.set_geom(next_geom);
                 if let Some(geom) = next_geom_override {
                     current_position.get_geom_override(geom);
