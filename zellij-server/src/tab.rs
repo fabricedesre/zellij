@@ -255,6 +255,20 @@ pub trait Pane {
     fn borderless(&self) -> bool;
 }
 
+macro_rules! resize_pty {
+    ($pane:expr, $os_input:expr) => {
+        if let PaneId::Terminal(ref pid) = $pane.pid() {
+            // FIXME: This `set_terminal_size_using_fd` call would be best in
+            // `TerminalPane::reflow_lines`
+            $os_input.set_terminal_size_using_fd(
+                *pid,
+                $pane.get_content_columns() as u16,
+                $pane.get_content_rows() as u16,
+            );
+        }
+    };
+}
+
 impl Tab {
     // FIXME: Still too many arguments for clippy to be happy...
     #[allow(clippy::too_many_arguments)]
@@ -734,7 +748,7 @@ impl Tab {
         self.draw_pane_frames = draw_pane_frames;
         self.should_clear_display_before_rendering = true;
         let viewport = self.viewport;
-        for (pane_id, pane) in self.panes.iter_mut() {
+        for pane in self.panes.values_mut() {
             if !pane.borderless() {
                 pane.set_frame(draw_pane_frames);
             }
@@ -761,15 +775,7 @@ impl Tab {
                 pane.set_content_offset(Offset::shift(pane_rows_offset, pane_columns_offset));
             }
 
-            // FIXME: This, and all other `set_terminal_size_using_fd` calls, would be best in
-            // `TerminalPane::reflow_lines`
-            if let PaneId::Terminal(pid) = pane_id {
-                self.os_api.set_terminal_size_using_fd(
-                    *pid,
-                    pane.get_content_columns() as u16,
-                    pane.get_content_rows() as u16,
-                );
-            }
+            resize_pty!(pane, self.os_api);
         }
     }
     pub fn render(&mut self) {
@@ -2053,31 +2059,19 @@ impl Tab {
                 let new_position = self.panes.get_mut(&p).unwrap();
                 let next_geom = new_position.position_and_size();
                 let next_geom_override = new_position.geom_override();
-                if let PaneId::Terminal(pid) = self.active_terminal.as_ref().unwrap() {
-                    self.os_api.set_terminal_size_using_fd(
-                        *pid,
-                        new_position.get_content_columns() as u16,
-                        new_position.get_content_rows() as u16,
-                    );
-                }
                 new_position.set_geom(prev_geom);
                 if let Some(geom) = prev_geom_override {
                     new_position.get_geom_override(geom);
                 }
+                resize_pty!(new_position,self.os_api);
                 new_position.set_should_render(true);
 
                 let current_position = self.panes.get_mut(&self.active_terminal.unwrap()).unwrap();
-                if let PaneId::Terminal(ref pid) = p {
-                    self.os_api.set_terminal_size_using_fd(
-                        *pid,
-                        current_position.get_content_columns() as u16,
-                        current_position.get_content_rows() as u16,
-                    );
-                }
                 current_position.set_geom(next_geom);
                 if let Some(geom) = next_geom_override {
                     current_position.get_geom_override(geom);
                 }
+                resize_pty!(current_position, self.os_api);
                 current_position.set_should_render(true);
             }
         }
@@ -2107,31 +2101,19 @@ impl Tab {
                 let new_position = self.panes.get_mut(&p).unwrap();
                 let next_geom = new_position.position_and_size();
                 let next_geom_override = new_position.geom_override();
-                if let PaneId::Terminal(pid) = self.active_terminal.as_ref().unwrap() {
-                    self.os_api.set_terminal_size_using_fd(
-                        *pid,
-                        new_position.get_content_columns() as u16,
-                        new_position.get_content_rows() as u16,
-                    );
-                }
                 new_position.set_geom(prev_geom);
                 if let Some(geom) = prev_geom_override {
                     new_position.get_geom_override(geom);
                 }
+                resize_pty!(new_position,self.os_api);
                 new_position.set_should_render(true);
 
                 let current_position = self.panes.get_mut(&self.active_terminal.unwrap()).unwrap();
-                if let PaneId::Terminal(ref pid) = p {
-                    self.os_api.set_terminal_size_using_fd(
-                        *pid,
-                        current_position.get_content_columns() as u16,
-                        current_position.get_content_rows() as u16,
-                    );
-                }
                 current_position.set_geom(next_geom);
                 if let Some(geom) = next_geom_override {
                     current_position.get_geom_override(geom);
                 }
+                resize_pty!(current_position, self.os_api);
                 current_position.set_should_render(true);
             }
         }
@@ -2161,31 +2143,19 @@ impl Tab {
                 let new_position = self.panes.get_mut(&p).unwrap();
                 let next_geom = new_position.position_and_size();
                 let next_geom_override = new_position.geom_override();
-                if let PaneId::Terminal(pid) = self.active_terminal.as_ref().unwrap() {
-                    self.os_api.set_terminal_size_using_fd(
-                        *pid,
-                        new_position.get_content_columns() as u16,
-                        new_position.get_content_rows() as u16,
-                    );
-                }
                 new_position.set_geom(prev_geom);
                 if let Some(geom) = prev_geom_override {
                     new_position.get_geom_override(geom);
                 }
+                resize_pty!(new_position,self.os_api);
                 new_position.set_should_render(true);
 
                 let current_position = self.panes.get_mut(&self.active_terminal.unwrap()).unwrap();
-                if let PaneId::Terminal(ref pid) = p {
-                    self.os_api.set_terminal_size_using_fd(
-                        *pid,
-                        current_position.get_content_columns() as u16,
-                        current_position.get_content_rows() as u16,
-                    );
-                }
                 current_position.set_geom(next_geom);
                 if let Some(geom) = next_geom_override {
                     current_position.get_geom_override(geom);
                 }
+                resize_pty!(current_position, self.os_api);
                 current_position.set_should_render(true);
             }
         }
@@ -2215,31 +2185,19 @@ impl Tab {
                 let new_position = self.panes.get_mut(&p).unwrap();
                 let next_geom = new_position.position_and_size();
                 let next_geom_override = new_position.geom_override();
-                if let PaneId::Terminal(pid) = self.active_terminal.as_ref().unwrap() {
-                    self.os_api.set_terminal_size_using_fd(
-                        *pid,
-                        new_position.get_content_columns() as u16,
-                        new_position.get_content_rows() as u16,
-                    );
-                }
                 new_position.set_geom(prev_geom);
                 if let Some(geom) = prev_geom_override {
                     new_position.get_geom_override(geom);
                 }
+                resize_pty!(new_position,self.os_api);
                 new_position.set_should_render(true);
 
                 let current_position = self.panes.get_mut(&self.active_terminal.unwrap()).unwrap();
-                if let PaneId::Terminal(ref pid) = p {
-                    self.os_api.set_terminal_size_using_fd(
-                        *pid,
-                        current_position.get_content_columns() as u16,
-                        current_position.get_content_rows() as u16,
-                    );
-                }
                 current_position.set_geom(next_geom);
                 if let Some(geom) = next_geom_override {
                     current_position.get_geom_override(geom);
                 }
+                resize_pty!(current_position, self.os_api);
                 current_position.set_should_render(true);
             }
         }
